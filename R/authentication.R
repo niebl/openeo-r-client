@@ -73,10 +73,11 @@ BasicAuth <- R6Class(
   inherit = IAuth,
   # public ====
   public = list(
-    initialize = function(endpoint, user, password) {
+    initialize = function(endpoint, user, password, isJwt = FALSE) {
       private$endpoint <- endpoint
       private$user <- user
       private$password <- password
+      private$isJwt <- isJwt
     },
     login = function() {
       req = req_auth_basic(
@@ -112,8 +113,11 @@ BasicAuth <- R6Class(
       if (length(private$.access_token) == 0 || is.na(private$.access_token)) {
         stop("No bearer token available. Please login first.")
       } else {
-        return(private$.access_token)
-        #return(paste("basic","",private$.access_token,sep="/"))
+        if(private$isJwt){
+          return(private$.access_token)
+        }else{
+          return(paste("basic","",private$.access_token,sep="/"))
+        }
       }
     },
     id_token = function() {
@@ -125,6 +129,7 @@ BasicAuth <- R6Class(
     endpoint = NA,
     user = NA,
     password = NA,
+    isJwt = FALSE,
     .access_token = NA
   )
 )
@@ -224,7 +229,7 @@ AbstractOIDCAuthentication <- R6Class(
     # attributes ####
     
     # functions ####
-    initialize = function(provider, config = list(),...) {
+    initialize = function(provider, config = list(), isJwt = FALSE, ...) {
       args = list(...)
       if ("force" %in% names(args)) private$force_use = args[["force"]]
       # comfort function select provider by name if one is provided
@@ -237,6 +242,8 @@ AbstractOIDCAuthentication <- R6Class(
       private$id = provider$id
       private$title = provider$title
       private$description = provider$description
+
+      private$isJwt = isJwt
       
       if (is.character(config)) {
         if (file.exists(config)) {
@@ -363,8 +370,11 @@ AbstractOIDCAuthentication <- R6Class(
             return(invisible(NULL))
           }
         }
-        return(private$auth$access_token)
-        #return(paste("oidc",private$id,private$auth$access_token,sep="/"))
+        if(private$isJwt){
+          return(private$auth$access_token)
+        }else{
+          return(paste("oidc",private$id,private$auth$access_token,sep="/"))
+        }
       } else {
         stop("Please login first, in order to obtain an access token")
         return(invisible(NULL))
@@ -393,6 +403,7 @@ AbstractOIDCAuthentication <- R6Class(
     grant_type = "", # not used internally by httr2, but maybe useful in openeo
     oauth_client = NULL,
     force_use=NULL,
+    isJwt = FALSE,
     
     auth = NULL, # httr2 oauth2.0 token object
     

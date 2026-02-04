@@ -373,6 +373,9 @@ OpenEOClient <- R6Class(
             # probably fetch resolve the potential string into a provider here
             provider = .get_oidc_provider(provider)
             
+            #check if it conforms to 1.3.0 token format
+            isJwt = private$usesJwtBearerTokens()
+
             auth_code = "authorization_code"
             auth_pkce = "authorization_code+pkce"
             device_pkce = "urn:ietf:params:oauth:grant-type:device_code+pkce"
@@ -393,10 +396,10 @@ OpenEOClient <- R6Class(
               
               # either credentials are set and / or authorization_code or client_credentials as grant_type
               if (full_credentials && is_client_credentials) {
-                private$auth_client = OIDCClientCredentialsFlow$new(provider = provider, config = config, force=TRUE)
+                private$auth_client = OIDCClientCredentialsFlow$new(provider = provider, config = config, isJwt = isJwt, force=TRUE)
               }
               else if (full_credentials && (is_auth_code || is.null(config$grant_type))) {
-                private$auth_client = OIDCAuthCodeFlow$new(provider = provider, config = config, force=TRUE)
+                private$auth_client = OIDCAuthCodeFlow$new(provider = provider, config = config, isJwt = isJwt, force=TRUE)
               }
               else if (is_auth_code || is_client_credentials) {
                 stop("For grant type 'authorization_code' and 'client_credentials' a client_id and secret must be provided")
@@ -445,13 +448,13 @@ OpenEOClient <- R6Class(
             if (is.null(private$auth_client)) {
               has_grant = "grant_type" %in% names(config)
               if (has_grant && device_pkce == config$grant_type) {
-                private$auth_client = OIDCDeviceCodeFlowPkce$new(provider=provider, config = config)
+                private$auth_client = OIDCDeviceCodeFlowPkce$new(provider=provider, isJwt = isJwt, config = config)
               } else if (has_grant && device_code == config$grant_type) {
-                private$auth_client = OIDCDeviceCodeFlow$new(provider=provider, config = config)
+                private$auth_client = OIDCDeviceCodeFlow$new(provider=provider, isJwt = isJwt, config = config)
               } else if (has_grant && client_credentials == config$grant_type) {
-                private$auth_client = OIDCClientCredentialsFlow$new(provider=provider, config = config)
+                private$auth_client = OIDCClientCredentialsFlow$new(provider=provider, isJwt = isJwt, config = config)
               } else if (is.null(config$grant_type) || (has_grant && auth_pkce == config$grant_type)) {
-                private$auth_client = OIDCAuthCodeFlowPKCE$new(provider=provider, config = config)
+                private$auth_client = OIDCAuthCodeFlowPKCE$new(provider=provider, isJwt = isJwt, config = config)
               }
             }
 
@@ -469,6 +472,19 @@ OpenEOClient <- R6Class(
         })
       })
     },
+
+    usesJwtBearerTokens = function() {
+      tryCatch({
+        conformanceList = private$GET(endpoint="conformance")$conformsTo
+        matching = grep(
+          "https?:\\/\\/api\\.openeo\\.org\\/.*\\/authentication\\/jwt\\/?", 
+          conformanceList, 
+          value = TRUE)
+        return(length(matching) == 1)
+      }, error = function(e) {
+        return(e)
+      })
+    },
     
     loginBasic = function(user, password) {
       tryCatch({
@@ -479,8 +495,11 @@ OpenEOClient <- R6Class(
           endpoint = paste(self$getHost(),"credentials/basic",sep="/")
         }
         
+        #check if it conforms to 1.3.0 token format
+        isJwt = private$usesJwtBearerTokens()
+
         #endpoint,user,password
-        private$auth_client = BasicAuth$new(endpoint,user,password)
+        private$auth_client = BasicAuth$new(endpoint,user,password,isJwt)
 
         # user_id is probably user in BasicAuth, is this a relict from openeo 0.4?
         self$user_id = private$auth_client$login()
