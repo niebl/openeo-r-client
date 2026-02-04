@@ -112,7 +112,8 @@ BasicAuth <- R6Class(
       if (length(private$.access_token) == 0 || is.na(private$.access_token)) {
         stop("No bearer token available. Please login first.")
       } else {
-        return(paste("basic","",private$.access_token,sep="/"))
+        return(private$.access_token)
+        #return(paste("basic","",private$.access_token,sep="/"))
       }
     },
     id_token = function() {
@@ -362,7 +363,8 @@ AbstractOIDCAuthentication <- R6Class(
             return(invisible(NULL))
           }
         }
-        return(paste("oidc",private$id,private$auth$access_token,sep="/"))
+        return(private$auth$access_token)
+        #return(paste("oidc",private$id,private$auth$access_token,sep="/"))
       } else {
         stop("Please login first, in order to obtain an access token")
         return(invisible(NULL))
