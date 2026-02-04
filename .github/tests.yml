@@ -24,13 +24,13 @@ jobs:
         working-directory: test-api
         run: | 
           npm install
-          npm run adduser js-client js-client
+          npm run adduser r-client r-client
           npm run up
 
       - name: install openeo package
-        working-directory: js-client 
-        run: R CMD INSTALL --preclean --no-multiarch --with-keep.source openeo-r-client      
+        working-directory: r-client 
+        run: R CMD INSTALL --no-multiarch --with-keep.source .     
 
       - name: Test R client
-        working-directory: js-client 
-        run: R -f tests/testthat.R
+        working-directory: r-client/tests
+        run: R -f testthat.R
