@@ -1,10 +1,10 @@
 # test case ----
 test_that("everything works with reference back-end", {
   # comment the skip out to run this larger test and set credentials
-  testthat::skip("only for manual use")
-  host = "https://earthengine.openeo.org"
-  user = ""
-  pwd = ""
+  # testthat::skip("only for manual use")
+  host = "http://127.0.0.1:8080"
+  user = "r-client"
+  pwd = "r-client"
   
   # connecting ----
   con = connect(host = host)
