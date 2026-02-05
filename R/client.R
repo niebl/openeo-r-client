@@ -482,7 +482,7 @@ OpenEOClient <- R6Class(
           value = TRUE)
         return(length(matching) == 1)
       }, error = function(e) {
-        return(e)
+        return(FALSE)
       })
     },
     
