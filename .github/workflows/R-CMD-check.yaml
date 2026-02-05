@@ -39,7 +39,20 @@ jobs:
         run: | 
           npm install
           npm run adduser r-client r-client
-          npm run up
+          npm run up &
+          echo "Waiting for test API to become ready on http://127.0.0.1:8080 ..."
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:8080 >/dev/null 2>&1; then
+              echo "Test API is up."
+              break
+            fi
+            echo "Test API not ready yet, retrying in 2 seconds... (attempt $i/30)"
+            sleep 2
+            if [ "$i" -eq 30 ]; then
+              echo "Test API failed to start within the expected time."
+              exit 1
+            fi
+          done
 
       - uses: actions/checkout@v6
         with:
