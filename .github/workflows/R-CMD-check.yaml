@@ -41,7 +41,7 @@ jobs:
           npm run adduser r-client r-client
           npm run up
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: r-client
 
