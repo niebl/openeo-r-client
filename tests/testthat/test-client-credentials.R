@@ -18,10 +18,15 @@ test_that("test against local KeyCloak instance for client credentials", {
   class(provider) = "Provider"
   
   expect_silent({
-    auth = OIDCClientCredentialsFlow$new(provider=provider, config = list(client_id=client_id,secret=secret))
+    auth = OIDCClientCredentialsFlow$new(
+      provider=provider, 
+      config = list(client_id=client_id,secret=secret), 
+      isJwt=FALSE #test case is formatted for legacy-token
+      )
     auth$login()
     token = auth$access_token
   })
   
   expect(startsWith(token,paste0("oidc/",client_id,"/")),failure_message = "Token does not start with the required prefix")
+  # TODO: also test the jwt-method. check for the client_id in the "iss" issuer-attribute of the jwt. requires jwt decoding
 })
