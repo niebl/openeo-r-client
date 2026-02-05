@@ -374,7 +374,7 @@ OpenEOClient <- R6Class(
             provider = .get_oidc_provider(provider)
             
             # check if it conforms to 1.3.0 token format
-            isJwt = private$usesJwtBearerTokens()
+            isJwt = private$isJwtBearerTokenConformant()
 
             auth_code = "authorization_code"
             auth_pkce = "authorization_code+pkce"
@@ -473,9 +473,11 @@ OpenEOClient <- R6Class(
       })
     },
 
-    usesJwtBearerTokens = function() {
+    isJwtBearerTokenConformant = function() {
       tryCatch({
-        conformanceList = private$GET(endpoint="conformance")$conformsTo
+        self$stopIfNotConnected()
+        
+        conformanceList = private$capabilities$conformsTo
         matching = grep(
           "https?:\\/\\/api\\.openeo\\.org\\/[^\\/]*\\/authentication\\/jwt\\/?", 
           conformanceList, 
@@ -496,7 +498,7 @@ OpenEOClient <- R6Class(
         }
         
         # check if it conforms to 1.3.0 token format
-        isJwt = private$usesJwtBearerTokens()
+        isJwt = private$isJwtBearerTokenConformant()
 
         # endpoint,user,password
         private$auth_client = BasicAuth$new(endpoint,user,password,isJwt)
