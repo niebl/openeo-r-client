@@ -102,10 +102,10 @@ test_that("everything works with reference back-end", {
   expect_message(delete_service(service = service),regexp = ".*successfully.*")
   
   # sync call ----
-  r = compute_result(graph=graph,output_file = "gee_test.png")
+  r = compute_result(graph=graph,output_file = "test-api_test.png")
   
-  expect(file.exists("gee_test.png"),failure_message = "sync call failed to store a file")
-  file.remove("gee_test.png")
+  expect(file.exists("test-api_test.png"),failure_message = "sync call failed to store a file")
+  file.remove("test-api_test.png")
   
   # async call ----
   job =  create_job(graph=final,title="Testthat::UC1 Rclient NDVI")
@@ -130,11 +130,11 @@ test_that("everything works with reference back-end", {
   expect(nrow(assets) > 0,failure_message = "No processed files...")
   
   
-  files = download_results(job = job,folder = "./gee_test/")
+  files = download_results(job = job,folder = "./test-api_test/")
   expect(length(files)>0,failure_message = "no files downloaded")
   
   expect(all(sapply(files,file.exists)), failure_message = "async call did not process data to be stored")
   
   expect_message(delete_job(job = job),regexp = ".*successfully deleted.*")
-  unlink("./gee_test/")
+  unlink("./test-api_test/")
 })
