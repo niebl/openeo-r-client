@@ -373,7 +373,7 @@ OpenEOClient <- R6Class(
             # probably fetch resolve the potential string into a provider here
             provider = .get_oidc_provider(provider)
             
-            #check if it conforms to 1.3.0 token format
+            # check if it conforms to 1.3.0 token format
             isJwt = private$usesJwtBearerTokens()
 
             auth_code = "authorization_code"
@@ -495,10 +495,10 @@ OpenEOClient <- R6Class(
           endpoint = paste(self$getHost(),"credentials/basic",sep="/")
         }
         
-        #check if it conforms to 1.3.0 token format
+        # check if it conforms to 1.3.0 token format
         isJwt = private$usesJwtBearerTokens()
 
-        #endpoint,user,password
+        # endpoint,user,password
         private$auth_client = BasicAuth$new(endpoint,user,password,isJwt)
 
         # user_id is probably user in BasicAuth, is this a relict from openeo 0.4?
