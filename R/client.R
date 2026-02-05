@@ -477,7 +477,7 @@ OpenEOClient <- R6Class(
       tryCatch({
         conformanceList = private$GET(endpoint="conformance")$conformsTo
         matching = grep(
-          "https?:\\/\\/api\\.openeo\\.org\\/.*\\/authentication\\/jwt\\/?", 
+          "https?:\\/\\/api\\.openeo\\.org\\/[^\\/]*\\/authentication\\/jwt\\/?", 
           conformanceList, 
           value = TRUE)
         return(length(matching) == 1)
