@@ -1,7 +1,7 @@
 # test case ----
 test_that("everything works with reference back-end", {
   # comment the skip out to run this larger test and set credentials
-  # testthat::skip("only for manual use")
+  testthat::skip_on_cran()
   host = "http://127.0.0.1:8080"
   user = "r-client"
   pwd = "r-client"
