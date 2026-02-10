@@ -25,7 +25,7 @@ jobs:
         run: | 
           npm install
           npm run adduser r-client r-client
-          npm run up
+          legacyTokens=true npm run up
 
       - name: install openeo package
         working-directory: r-client 
