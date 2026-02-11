@@ -3,6 +3,10 @@ on: [push, pull_request]
 jobs:
   tests:
     runs-on: ubuntu-latest
+
+    env:
+      CONNECTION_TESTS: true
+
     steps:
       - uses: actions/checkout@v6
         with:
