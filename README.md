@@ -53,6 +53,38 @@ Currently, the package complies to the major openEO API version 1.1.x. It is als
 | v0.5.x | [v0.4.2](https://openeo.org/documentation/0.4/developers/api/reference.html) | deprecated |
 | v0.4.x | [v0.4.2](https://openeo.org/documentation/0.4/developers/api/reference.html) | deprecated |
 
+# Testing
+
+The testing suite is configured to connect a local instance of the [openEO-test-api](https://github.com/moregeo-it/openeo-test-api) at `127.0.0.1:8080`. For local testing, it is recommended to fetch and run a local instance via the following commands:
+```sh
+git clone https://github.com/moregeo-it/openeo-test-api
+cd openeo-test-api
+npm install
+npm run adduser r-client r-client # set up the user profile used by the test suite
+npm run up # start the server at the default port 8080 as configured in config.json
+```
+To configure the test-api startup parameters, refer to the [configuration](https://github.com/moregeo-it/openeo-test-api?tab=readme-ov-file#configuration) guide in the openEO-test-api README."
+
+For running the tests locally, you first need to install the current version of the project as an R package. This is possible via the following code.
+```sh
+R CMD INSTALL --no-multiarch --with-keep.source .
+```
+
+Executing tests that connect to the [openEO-test-api](https://github.com/moregeo-it/openeo-test-api) instance must be explicitly allowed by setting the environment variable `CONNECTION_TESTS` to `true`. Otherwise, the tests in `test-testapi-test.R` and `test-client.R` will be skipped.
+
+After installation, testing can be run by executing
+```sh
+cd tests
+CONNECTION_TESTS=true R -f testthat.R
+```
+
+Alternatively, the more thorough package check can be run via the commands:
+```sh
+R CMD build --no-manual --no-build-vignettes .
+R CMD check --no-manual --no-build-vignettes openeo_*.tar.gz 
+```
+This process includes running the test suite.
+
 # Requirements
 
 The 'openeo' package won't process anything on the local machine. It will always interact with a designated back-end. Data storage and computations are performed directly at the back-end. Therefore, please make sure that you are registered with any of the available openEO back-ends in order to obtain credentials and the access URLs (see: [openEO Hub](https://hub.openeo.org/) for getting an overview about available back-ends). 

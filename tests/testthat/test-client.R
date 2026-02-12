@@ -10,8 +10,9 @@ test_that("connect with missing url fails when setting via initialization", {
 })
 
 test_that("connect with valid url", {
-  skip_if_offline()
-  x = openeo:::OpenEOClient$new(host = "https://openeo.cloud")
+  testthat::skip_if_not(run_connection_tests, "Skipping connection tests in this environment.")
+
+  x = openeo:::OpenEOClient$new(host = "http://127.0.0.1:8080")
   
   con = x$connect()
   expect(TRUE,failure_message = "connecting got an error")
