@@ -69,10 +69,13 @@ For running the tests locally, you first need to install the current version of 
 ```sh
 R CMD INSTALL --no-multiarch --with-keep.source .
 ```
+
+Executing tests that connect to the [openEO-test-api](https://github.com/moregeo-it/openeo-test-api) instance must be explicitly allowed by setting the environment variable `CONNECTION_TESTS` to `true`. Otherwise, the tests in `test-testapi-test.R` and `test-client.R` will be skipped.
+
 After installation, testing can be run by executing
 ```sh
 cd tests
-R -f testthat.R
+CONNECTION_TESTS=true R -f testthat.R
 ```
 
 Alternatively, the more thorough package check can be run via the commands:

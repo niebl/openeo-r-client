@@ -1,8 +1,7 @@
 # test case ----
 test_that("everything works with reference back-end", {
   # comment the skip out to run this larger test and set credentials
-  run_connection_tests = Sys.getenv("CONNECTION_TESTS")
-  testthat::skip_if_not((run_connection_tests == "true"), "Skipping connection tests in this environment.")
+  testthat::skip_if_not(run_connection_tests, "Skipping connection tests in this environment.")
   host = "http://127.0.0.1:8080"
   user = "r-client"
   pwd = "r-client"
